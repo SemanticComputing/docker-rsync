@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo asd
+
+set -euo pipefail
+if [ -n "${DEBUG:-}" ]; then
+    set -x
+fi
+
+if ! whoami &> /dev/null; then
+  if [ -w /etc/passwd ]; then
+    echo "${USER_NAME:-default}:x:$(id -u):0:${USER_NAME:-default} user:${HOME}:/sbin/nologin" >> /etc/passwd
+  fi
+fi
+
+SSH_PRIVATE_KEY_FILE="${SSH_PRIVATE_KEY_FILE:-/secrets/private_key}"
+
+SSH_COMMAND="ssh"
+if [ -f "$SSH_PRIVATE_KEY_FILE" ]; then
+    SSH_COMMAND=$(printf "%s %q" "$SSH_COMMAND" "-i $SSH_PRIVATE_KEY_FILE")
+fi
+if [ -n "${SSH_PRIVATE_KEY:-}" ]; then
+    echo "$SSH_PRIVATE_KEY" > /tmp/key
+    SSH_COMMAND=$(printf "%s %q" "$SSH_COMMAND" "-i /tmp/key")
+fi
+
+RSYNC_CMD='rsync $RSYNC_OPTIONS -e "$SSH_COMMAND" "$RSYNC_SOURCE" "$RSYNC_TARGET"'
+echo "$RSYNC_CMD"
+eval "exec $RSYNC_CMD"
