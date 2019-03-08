@@ -36,9 +36,6 @@ objects:
   apiVersion: v1
   metadata:
     name: "${RSYNC_IMAGESTREAM}"
-    labels:
-      app: "${APP_NAME}"
-      environment: "${ENVIRONMENT}"
   spec:
     lookupPolicy:
       local: true
