@@ -16,6 +16,6 @@ echo "$YAML"
 read -p "Create these resoures (y/n): " prompt
 
 if [ "$prompt" == "y" ]; then
-    echo "$YAML" | oc create -f -
+    echo "$YAML" | oc apply -f -
 fi
 
