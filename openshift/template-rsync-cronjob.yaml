@@ -71,5 +71,12 @@ objects:
             containers:
             - name: rsync
               image: "${RSYNC_IMAGESTREAM}:latest"
+              env:
+              - name: RSYNC_SOURCE
+                value: "${RSYNC_SOURCE}"
+              - name: RSYNC_TARGET
+                value: "${RSYNC_TARGET}"
+              - name: RSYNC_OPTIONS
+                value: "${RSYNC_OPTIONS}"
             restartPolicy: OnFailure
 

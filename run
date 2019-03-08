@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo asd
-
 set -euo pipefail
 if [ -n "${DEBUG:-}" ]; then
     set -x
