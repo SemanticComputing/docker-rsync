@@ -4,3 +4,4 @@ DOCKERHUB_IMAGE=secoresearch/rsync:latest
 RSYNC_IMAGESTREAM=rsync-example
 RSYNC_SOURCE=/test/source
 RSYNC_TARGET=/test/target
+RSYNC_OPTSIONS=-avz

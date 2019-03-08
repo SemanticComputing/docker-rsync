@@ -17,13 +17,13 @@ SSH_PRIVATE_KEY_FILE="${SSH_PRIVATE_KEY_FILE:-/secrets/private_key}"
 
 SSH_COMMAND="ssh"
 if [ -f "$SSH_PRIVATE_KEY_FILE" ]; then
-    SSH_COMMAND=$(printf "%s %q" "$SSH_COMMAND" "-i $SSH_PRIVATE_KEY_FILE")
+    SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "$SSH_PRIVATE_KEY_FILE")
 fi
 if [ -n "${SSH_PRIVATE_KEY:-}" ]; then
     echo "$SSH_PRIVATE_KEY" > /tmp/key
-    SSH_COMMAND=$(printf "%s %q" "$SSH_COMMAND" "-i /tmp/key")
+    SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "/tmp/key")
 fi
 
-RSYNC_CMD='rsync $RSYNC_OPTIONS -e "$SSH_COMMAND" "$RSYNC_SOURCE" "$RSYNC_TARGET"'
+RSYNC_CMD='rsync ${RSYNC_OPTIONS:-} ${SSH_COMMAND:+-e "$SSH_COMMAND"} "$RSYNC_SOURCE" "$RSYNC_TARGET"'
 echo "$RSYNC_CMD"
 eval "exec $RSYNC_CMD"

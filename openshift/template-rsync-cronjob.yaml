@@ -27,6 +27,9 @@ parameters:
 - name: RSYNC_TARGET
   value: "<rsync target>"
   description: "Target for rsync. E.g. /m/some-folder/ or user@server.example.org"
+- name: RSYNC_OPTIONS
+  value: "-avz"
+  description: "Command line options to pass to rsync"
 
 objects:
 - kind: ImageStream
