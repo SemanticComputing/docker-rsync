@@ -4,23 +4,24 @@ metadata:
   name: rsync-cronjob
   annotations:
     description: >
+      Rsync file or folder between a volume and a remote host.
 
 parameters:
-- name: APP_NAME
+- name: CRONJOB_NAME
   value: ""
-  description: "Name for the created resources as well ass for labeling app:<app name>"
-- name: ENVIRONMENT
-  value: "staging"
-  description: "For labeling resources environment:<environment>"
-- name: DOCKERHUB_IMAGE
-  value: "secoresearch/rsync:latest"
-  description: "rsync image in dockerhub"
+  description: "Name for the CronJob and other create resources"
 - name: RSYNC_IMAGESTREAM
   value: "rsync"
-  description: "ImageStream for the rsync image. If it does not exist, the image will be imported from dockerhub to this ImageStream"
+  description: "ImageStream that contains the rsync image (import it from the dockerhub first)"
 - name: SSH_KEY_SECRET
   value: ""
   description: "OpenShift secret containing the SSH private key to use (if needed)"
+- name: PVC_NAME
+  value: ""
+  description: "PhysicalVolumeClaim to mount into the rsync container"
+- name: PVC_TARGET
+  value "/m/"
+  description: "Path inside the rsync container to mount the PVC to"
 - name: RSYNC_SOURCE
   value: "/m/"
   description: "Rsync source. E.g. /m/some-folder/ or user@server.example.org"
@@ -51,19 +52,13 @@ objects:
 - kind: CronJob
   apiVersion: batch/v1beta1
   metadata:
-    name: "${APP_NAME}"
-    labels:
-      app: "${APP_NAME}"
-      environment: "${ENVIRONMENT}"
+    name: "${CRONJOB_NAME}"
   spec:
     schedule: "*/2 * * * *"
     jobTemplate:
       spec:
         template:
           metadata:
-            labels:
-              environment: "${ENVIRONMENT}"
-              name: "${APP_NAME}"
           spec:
             containers:
             - name: rsync

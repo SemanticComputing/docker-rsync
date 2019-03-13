@@ -1,0 +1,44 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: rsync-cronjob
+  annotations:
+    description: >
+      Just a test rsync job
+
+parameters:
+- name: JOB_NAME
+  value: "rsync-test"
+  description: "Name for the CronJob and other create resources"
+- name: RSYNC_IMAGESTREAM
+  value: "rsync"
+  description: "ImageStream that contains the rsync image (import it from the dockerhub first)"
+- name: RSYNC_SOURCE
+  value: "/test/source/"
+- name: RSYNC_TARGET
+  value: "/test/target/"
+- name: RSYNC_OPTIONS
+  value: "-avz"
+
+objects:
+- kind: Job
+    apiVersion: extensions/v1
+    metadata:
+      name: "${JOB_NAME}"
+    spec:
+      template:
+        metadata:
+          name: "${JOB_NAME}"
+        spec:
+          containers:
+          - name: rsync
+            image: "${RSYNC_IMAGESTREAM}:latest"
+            env:
+            - name: RSYNC_SOURCE
+              value: "${RSYNC_SOURCE}"
+            - name: RSYNC_TARGET
+              value: "${RSYNC_TARGET}"
+            - name: RSYNC_OPTIONS
+              value: "${RSYNC_OPTIONS}"
+          restartPolicy: OnFailure
+

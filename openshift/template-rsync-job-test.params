@@ -1,6 +1,4 @@
-APP_NAME=rsync-example
-ENVIRONMENT=test
-DOCKERHUB_IMAGE=secoresearch/rsync:latest
+JOB_NAME=rsync-example
 RSYNC_IMAGESTREAM=rsync-example
 RSYNC_SOURCE=/test/source
 RSYNC_TARGET=/test/target

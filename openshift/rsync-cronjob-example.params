@@ -1,0 +1,8 @@
+CRONJOB_NAME=rsync-example
+RSYNC_IMAGESTREAM=rsync-example
+PVC_NAME=example-volume
+PVC_TARGET=/m/
+RSYNC_SOURCE=/m/source
+RSYNC_TARGET=rsync-user@examplehost.domain.com
+RSYNC_OPTIONS=-avz
+PRIVKEY_SECRET_NAME='example-ssh-key'
