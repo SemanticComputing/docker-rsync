@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk add rsync bash
+RUN apk add rsync bash openssh-client
 
 COPY run /entrypoint
 RUN chmod ug+x /entrypoint

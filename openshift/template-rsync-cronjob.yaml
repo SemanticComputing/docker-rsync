@@ -13,14 +13,20 @@ parameters:
 - name: RSYNC_IMAGESTREAM
   value: "rsync"
   description: "ImageStream that contains the rsync image (import it from the dockerhub first)"
-- name: SSH_KEY_SECRET
+- name: SCHEDULE
+  value: "0 3 * * *"
+  description: "Schedule in cron format"
+- name: PRIVKEY_SECRET_NAME
   value: ""
-  description: "OpenShift secret containing the SSH private key to use (if needed)"
+  description: "Name of the OpenShift secret that contains the ssh private key used to access remote hosts"
+- name: PRIVKEY_SECRET_KEY
+  value: ""
+  description: "Key within the secret that contains the ssh private key"
 - name: PVC_NAME
   value: ""
   description: "PhysicalVolumeClaim to mount into the rsync container"
 - name: PVC_TARGET
-  value "/m/"
+  value: "/m/"
   description: "Path inside the rsync container to mount the PVC to"
 - name: RSYNC_SOURCE
   value: "/m/"
@@ -33,42 +39,31 @@ parameters:
   description: "Command line options to pass to rsync"
 
 objects:
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    name: "${RSYNC_IMAGESTREAM}"
-  spec:
-    lookupPolicy:
-      local: true
-    tags:
-    - name: latest
-      from:
-        kind: DockerImage
-        name: "${DOCKERHUB_IMAGE}"
-      importPolicy:
-        scheduled: true
-      referencePolicy:
-        type: Source
 - kind: CronJob
   apiVersion: batch/v1beta1
   metadata:
     name: "${CRONJOB_NAME}"
   spec:
-    schedule: "*/2 * * * *"
+    schedule: "${SCHEDULE}"
     jobTemplate:
       spec:
         template:
           metadata:
           spec:
             containers:
-            - name: rsync
-              image: "${RSYNC_IMAGESTREAM}:latest"
-              env:
-              - name: RSYNC_SOURCE
-                value: "${RSYNC_SOURCE}"
-              - name: RSYNC_TARGET
-                value: "${RSYNC_TARGET}"
-              - name: RSYNC_OPTIONS
-                value: "${RSYNC_OPTIONS}"
+              - name: rsync
+                image: "${RSYNC_IMAGESTREAM}:latest"
+                env:
+                  - name: RSYNC_SOURCE
+                    value: "${RSYNC_SOURCE}"
+                  - name: RSYNC_TARGET
+                    value: "${RSYNC_TARGET}"
+                  - name: RSYNC_OPTIONS
+                    value: "${RSYNC_OPTIONS}"
+                  - name: SSH_PRIVATE_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: "${PRIVKEY_SECRET_NAME}"
+                        key: "${PRIVKEY_SECRET_KEY}"
             restartPolicy: OnFailure
 
