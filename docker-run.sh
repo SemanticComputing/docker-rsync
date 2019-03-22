@@ -43,6 +43,8 @@ VOLUME_SOURCES[2]="$(readlink -f "$D/test/target")"
 VOLUME_TARGETS[2]="/m/target"
 VOLUME_SOURCES[3]="$(readlink -f "$D/secrets/private_key")"
 VOLUME_TARGETS[3]="/secrets/private_key"
+VOLUME_SOURCES[4]="$(readlink -f "$D/entrypoint")"
+VOLUME_TARGETS[4]="/entrypoint"
 
 
 
