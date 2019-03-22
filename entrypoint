@@ -27,11 +27,16 @@ SSH_COMMAND="ssh"
 
 ssh_private_key() {
     echo "$1" > /tmp/key
+    chown "$(id -u)" "/tmp/key"
+    chmod 600 /tmp/key
     SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "/tmp/key")
 }
 
 ssh_private_key_from_file() {
-    SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "$1")
+    cp "$1" "/tmp/key"
+    chown "$(id -u)" "/tmp/key"
+    chmod 600 /tmp/key
+    SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "/tmp/key")
 }
 
 ssh_host_keys() {
