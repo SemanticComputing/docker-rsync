@@ -2,6 +2,28 @@
 
 A container for rsync:ing stuff
 
+# Environment
+
+These environment variables can be used to configure the container
+```
+DEBUG=
+SSH_PRIVATE_KEY_FILE=/secrets/id_rsa
+SSH_PRIVATE_KEY=<private key here> # Prioritized over SSH_PRIVATE_KEY_FILE if set
+SSH_KNOWN_HOSTS_FILE=/config/know_hosts
+SSH_KNOWN_HOSTS=<known_hosts contents here> # Prioritize dover SSH_KNOWN_HOSTS_FILE if set
+RSYNC_SOURCE=/m/source/
+RSYNC_TARGET=/m/target/
+RSYNC_OPTIONS=-avz
+```
+
+`SSH_PRIVATE_KEY_FILE` should contain path to the private key to be used for accessing any remote hosts. Alternatively the key can be directly given in the `SSH_PRIVATE_KEY`. `SSH_PRIVATE_KEY` will be prioritized if both are set.
+
+`SSH_KNOWN_HOSTS_FILE` should contain the public keys for the ssh hosts that will be accessed. Format is whatever will be accepted as UserKnownHostsFile in ssh_config. Alternatively the contents of the file can be given in `SSH_KNOWN_HOSTS`. `SSH_KNOWN_HOSTS will be prioritized if both are set`
+
+`RSYNC_SOURCE` and `RSYNC_TARGET` will be fed to rsync as is. They can be either local (e.g. /path/to/file) or remote (e.g. user@examplehost.com:/path/to/file) or whatever rsync normally accepts.
+
+`RSYNC_OPTIONS` can be used to define extra options for rsync. Do not override the ssh command ('-e' -flag). Anything that would need the ssh command to be customized (e.g. different ssh port) are not well supported at the moment.
+
 # OpenShift
 
 Make sure you have have the OpenShift CLI tools installed and that you are logged in
