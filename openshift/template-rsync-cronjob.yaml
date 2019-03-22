@@ -22,6 +22,12 @@ parameters:
 - name: PRIVKEY_SECRET_KEY
   value: ""
   description: "Key within the secret that contains the ssh private key"
+- name: KNOWN_HOSTS_CONFIGMAP_NAME
+  value: ""
+  description: "Name of the ConfigMap containing the known_hosts file"
+- name: KNOWN_HOSTS_CONFIGMAP_KEY
+  value: ""
+  description: "Key within the ConfigMap that contains the known_hosts file"
 - name: PVC_NAME
   value: ""
   description: "PhysicalVolumeClaim to mount into the rsync container"
@@ -61,11 +67,18 @@ objects:
                     value: "${RSYNC_TARGET}"
                   - name: RSYNC_OPTIONS
                     value: "${RSYNC_OPTIONS}"
+                  - name: SSH_HOST_KEYS
+                    value: "${SSH_HOST_KEYS}"
                   - name: SSH_PRIVATE_KEY
                     valueFrom:
                       secretKeyRef:
                         name: "${PRIVKEY_SECRET_NAME}"
                         key: "${PRIVKEY_SECRET_KEY}"
+                  - name: SSH_KNOWN_HOSTS
+                    valueFrom:
+                      configMapKeyRef:
+                        name: "${KNOWN_HOSTS_CONFIGMAP_NAME}"
+                        key: "${KNOWN_HOSTS_CONFIGMAP_KEY}"
                 volumeMounts:
                   - name: volume
                     mountPath: "${PVC_TARGET}"
