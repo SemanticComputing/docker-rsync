@@ -53,6 +53,7 @@ objects:
             containers:
               - name: rsync
                 image: "${RSYNC_IMAGESTREAM}:latest"
+                imagePullPolicy: Always
                 env:
                   - name: RSYNC_SOURCE
                     value: "${RSYNC_SOURCE}"
@@ -65,5 +66,12 @@ objects:
                       secretKeyRef:
                         name: "${PRIVKEY_SECRET_NAME}"
                         key: "${PRIVKEY_SECRET_KEY}"
+                volumeMounts:
+                  - name: volume
+                    mountPath: "${PVC_TARGET}"
+            volumes:
+              - name: volume
+                persistentVolumeClaim:
+                  claimName: "${PVC_NAME}"
             restartPolicy: OnFailure
 
