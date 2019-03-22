@@ -50,6 +50,8 @@ If you wish, you can replace the imagestream name 'rsync' with something else.
 
 ## Scheduled Rsync
 
+**TODO: Setting up known_hosts config not explained here**
+
 In the openshift/ folder, there is a template that can be used to schedule rsync of a folder/file between a volume and a remote host
 
 First you need to have an OpenShift secret containing the private ssh key used to access the remote host. If you don't have one, create one e.g.
