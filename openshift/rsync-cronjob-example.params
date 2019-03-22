@@ -8,3 +8,5 @@ RSYNC_TARGET=rsync-user@examplehost.domain.com
 RSYNC_OPTIONS=-avz
 PRIVKEY_SECRET_NAME=example-secret
 PRIVKEY_SECRET_KEY_NAME=privkey
+KNOWN_HOSTS_CONFIGMAP_NAME=<configmap name>
+KNOWN_HOSTS_CONFIGMAP_KEY=<configmap key>
