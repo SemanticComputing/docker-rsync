@@ -49,8 +49,8 @@ construct_ssh_command() {
     elif [ -f "${SSH_PRIVATE_KEY_FILE:-}" ]; then
         ssh_private_key_from_file "$SSH_PRIVATE_KEY_FILE"
     fi
-    if [ -n "${SSH_HOST_KEYS:-}" ]; then
-        ssh_host_keys "$SSH_HOST_KEYS"
+    if [ -n "${SSH_KNOWN_HOSTS:-}" ]; then
+        ssh_host_keys "$SSH_KNOWN_HOSTS"
     elif [ -f "${SSH_KNOWN_HOSTS_FILE:-}" ]; then
         ssh_host_keys_from_file "$SSH_KNOWN_HOSTS_FILE"
     fi
