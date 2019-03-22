@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+################################
+# ADD USER TO PASSWD IF NEEDED #
+################################
+
 set -euo pipefail
 if [ -n "${DEBUG:-}" ]; then
     set -x
@@ -11,17 +16,56 @@ fi
 
 whoami
 
-SSH_PRIVATE_KEY_FILE="${SSH_PRIVATE_KEY_FILE:-/secrets/private_key}"
 
+#########################
+# CONSTRUCT SSH COMMAND #
+#########################
+
+SSH_PRIVATE_KEY_FILE="${SSH_PRIVATE_KEY_FILE:-/secrets/private_key}"
+SSH_KNOWN_HOSTS_FILE="${SSH_KNOWN_HOSTS_FILE:-/config/known_hosts}"
 SSH_COMMAND="ssh"
-if [ -f "$SSH_PRIVATE_KEY_FILE" ]; then
-    SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "$SSH_PRIVATE_KEY_FILE")
-fi
-if [ -n "${SSH_PRIVATE_KEY:-}" ]; then
-    echo "$SSH_PRIVATE_KEY" > /tmp/key
+
+ssh_private_key() {
+    echo "$1" > /tmp/key
     SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "/tmp/key")
-fi
+}
+
+ssh_private_key_from_file() {
+    SSH_COMMAND=$(printf "%s -i %q" "$SSH_COMMAND" "$1")
+}
+
+ssh_host_keys() {
+    echo "$1" > /tmp/known_hosts;
+    SSH_COMMAND="$(printf "%s -o %q" "$SSH_COMMAND" "UserKnownHostsFile=/tmp/known_hosts")"
+}
+
+ssh_host_keys_from_file() {
+    SSH_COMMAND="$(printf "%s -o %q" "$SSH_COMMAND" "UserKnownHostsFile=$SSH_KNOWN_HOSTS_FILE")"
+}
+
+construct_ssh_command() {
+    if [ -n "${SSH_PRIVATE_KEY:-}" ]; then
+        ssh_private_key "$SSH_PRIVATE_KEY"
+    elif [ -f "${SSH_PRIVATE_KEY_FILE:-}" ]; then
+        ssh_private_key_from_file "$SSH_PRIVATE_KEY_FILE"
+    fi
+    if [ -n "${SSH_HOST_KEYS:-}" ]; then
+        ssh_host_keys "$SSH_HOST_KEYS"
+    elif [ -f "${SSH_KNOWN_HOSTS_FILE:-}" ]; then
+        ssh_host_keys_from_file "$SSH_KNOWN_HOSTS_FILE"
+    fi
+}
+
+construct_ssh_command
+
+###########################
+# CONSTRUCT RSYNC COMMAND #
+###########################
 
 RSYNC_CMD='rsync ${RSYNC_OPTIONS:-} ${SSH_COMMAND:+-e "$SSH_COMMAND"} "$RSYNC_SOURCE" "$RSYNC_TARGET"'
 echo "$RSYNC_CMD"
+
+###########
+# EXECUTE #
+###########
 eval "exec $RSYNC_CMD"
