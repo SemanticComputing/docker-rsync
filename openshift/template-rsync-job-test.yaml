@@ -33,6 +33,7 @@ objects:
           containers:
           - name: rsync
             image: "${RSYNC_IMAGESTREAM}:latest"
+            imagePullPolicy: Always
             env:
             - name: RSYNC_SOURCE
               value: "${RSYNC_SOURCE}"
