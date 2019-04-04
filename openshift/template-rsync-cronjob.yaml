@@ -67,8 +67,6 @@ objects:
                     value: "${RSYNC_TARGET}"
                   - name: RSYNC_OPTIONS
                     value: "${RSYNC_OPTIONS}"
-                  - name: SSH_HOST_KEYS
-                    value: "${SSH_HOST_KEYS}"
                   - name: SSH_PRIVATE_KEY
                     valueFrom:
                       secretKeyRef:
