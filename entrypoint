@@ -63,14 +63,14 @@ construct_ssh_command() {
 
 construct_ssh_command
 
-###########################
-# CONSTRUCT RSYNC COMMAND #
-###########################
-
-RSYNC_CMD='rsync ${RSYNC_OPTIONS:-} ${SSH_COMMAND:+-e "$SSH_COMMAND"} "$RSYNC_SOURCE" "$RSYNC_TARGET"'
-echo "$RSYNC_CMD"
-
 ###########
 # EXECUTE #
 ###########
-eval "exec $RSYNC_CMD"
+RSYNC_CMD='rsync ${RSYNC_OPTIONS:-} ${SSH_COMMAND:+-e "$SSH_COMMAND"} "$RSYNC_SOURCE" "$RSYNC_TARGET"'
+if [ "$#" == "0" ]; then
+    echo "$RSYNC_CMD"
+    eval "exec $RSYNC_CMD"
+else
+    exec "$@"
+fi
+
