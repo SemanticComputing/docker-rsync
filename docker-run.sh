@@ -22,7 +22,7 @@ done
 ###################################
 
 # Variables
-IMAGE="rsync"
+IMAGE="secoresearch/rsync:latest"
 CONTAINER_NAME="$IMAGE-$RANDOM"
 IP="172.30.20.121"
 CONTAINER_PORTS=()
