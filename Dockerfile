@@ -1,6 +1,9 @@
-FROM alpine
+FROM ubuntu
 
-RUN apk add rsync bash openssh-client
+RUN apt-get update && apt-get install -y \
+    rsync \
+    bash \
+    openssh-client
 
 COPY entrypoint /entrypoint
 RUN chmod ug+x /entrypoint
